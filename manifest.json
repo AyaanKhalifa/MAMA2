@@ -1,0 +1,16 @@
+{
+  "name": "Student Result Generator",
+  "short_name": "Results",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#2c2c2c",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

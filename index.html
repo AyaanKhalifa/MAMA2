@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Result Generator</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+    <div class="controls no-print">
+        <button id="btn-img">Download as Image</button>
+        <button id="btn-pdf">Download as PDF</button>
+    </div>
+
+    <div class="a4-container landscape" id="result-sheet">
+        <div class="header">
+            <h1>AISHA SIDDIKA MADHYAMIK SCHOOL</h1>
+            <p>Jogwad village, Chikhli block, Navsari district, Gujarat Jogwad, Gujarat 396560</p>
+            <div class="divider">
+                <div class="line"></div>
+                <div class="ornament">&#10070;</div>
+                <div class="ornament">&#10070;</div>
+                <div class="line"></div>
+            </div>
+            <h2>Unit Test (Year 2026-27)</h2>
+            <h3>Class: <input type="text" value="12" class="inline-input"
+                    style="width: 35px; text-align: center; font-weight: bold;"> Commerce</h3>
+        </div>
+
+        <div class="student-info">
+            <div class="info-group">
+                <label>Student Name:</label>
+                <input type="text" id="student-name" class="inline-input" style="width: 400px;">
+            </div>
+            <div class="info-group">
+                <label>Roll No:</label>
+                <input type="text" id="roll-no" class="inline-input" style="width: 150px;">
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+        <table class="marks-table">
+            <thead>
+                <tr>
+                    <th class="subject-col">Subject</th>
+                    <th>Unit 1<br>(25)</th>
+                    <th>Unit 2<br>(25)</th>
+                    <th>Unit 3<br>(25)</th>
+                    <th>Unit 4<br>(25)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="subject-name">1. Accountancy</td>
+                    <td><input type="number" min="0" max="25" class="mark-input u1"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u2"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u3"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u4"></td>
+                </tr>
+                <tr>
+                    <td class="subject-name">2. Statistics</td>
+                    <td><input type="number" min="0" max="25" class="mark-input u1"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u2"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u3"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u4"></td>
+                </tr>
+                <tr>
+                    <td class="subject-name">3. Economics</td>
+                    <td><input type="number" min="0" max="25" class="mark-input u1"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u2"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u3"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u4"></td>
+                </tr>
+                <tr>
+                    <td class="subject-name">4. Organization of Commerce (O.C.M.)</td>
+                    <td><input type="number" min="0" max="25" class="mark-input u1"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u2"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u3"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u4"></td>
+                </tr>
+                <tr>
+                    <td class="subject-name">5. English</td>
+                    <td><input type="number" min="0" max="25" class="mark-input u1"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u2"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u3"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u4"></td>
+                </tr>
+                <tr>
+                    <td class="subject-name">6. Gujarati</td>
+                    <td><input type="number" min="0" max="25" class="mark-input u1"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u2"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u3"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u4"></td>
+                </tr>
+                <tr>
+                    <td class="subject-name">7. S.P. & C.C.</td>
+                    <td><input type="number" min="0" max="25" class="mark-input u1"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u2"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u3"></td>
+                    <td><input type="number" min="0" max="25" class="mark-input u4"></td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td class="subject-name" style="text-align: center; font-weight: bold;">Total Marks (Out of 175)
+                    </td>
+                    <td id="t-u1"></td>
+                    <td id="t-u2"></td>
+                    <td id="t-u3"></td>
+                    <td id="t-u4"></td>
+                </tr>
+                <tr class="percentage-row">
+                    <td class="subject-name" style="text-align: center; font-weight: bold;">Percentage (%)</td>
+                    <td id="p-u1"></td>
+                    <td id="p-u2"></td>
+                    <td id="p-u3"></td>
+                    <td id="p-u4"></td>
+                </tr>
+            </tfoot>
+        </table>
+        </div>
+
+        <div class="signatures">
+            <div class="sig-box">
+                Class Teacher Signature: <span class="sig-line"></span>
+            </div>
+            <div class="sig-box">
+                Principal Signature: <span class="sig-line"></span>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
