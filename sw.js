@@ -1,4 +1,4 @@
-const CACHE_NAME = 'result-store-v5';
+const CACHE_NAME = 'result-store-v6';
 const ASSETS = [
   './',
   './index.html',
@@ -18,24 +18,28 @@ self.addEventListener('install', (e) => {
   );
 });
 
-// Activate Event: Clear old caches and take control of all pages
+// Activate Event: Clear ALL old caches and take control of all pages
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
+        keys.map((key) => caches.delete(key))
       );
     }).then(() => self.clients.claim())
   );
 });
 
-// Fetch Event: Network-First Strategy for auto-updating on mobile & PC
+// Fetch Event: Always fetch HTML & live files directly from network
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
+
+  // Always get HTML directly from network so updates show instantly
+  if (e.request.mode === 'navigate' || e.request.url.includes('index.html') || e.request.url.endsWith('/')) {
+    e.respondWith(
+      fetch(e.request).catch(() => caches.match(e.request))
+    );
+    return;
+  }
 
   e.respondWith(
     fetch(e.request)
@@ -48,8 +52,6 @@ self.addEventListener('fetch', (e) => {
         }
         return networkResponse;
       })
-      .catch(() => {
-        return caches.match(e.request);
-      })
+      .catch(() => caches.match(e.request))
   );
 });

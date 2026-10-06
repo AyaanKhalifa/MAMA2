@@ -1,5 +1,5 @@
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').then((registration) => {
+    navigator.serviceWorker.register('sw.js?v=6').then((registration) => {
         registration.update();
     });
 
