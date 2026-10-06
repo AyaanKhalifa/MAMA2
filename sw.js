@@ -1,6 +1,6 @@
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open('result-store').then((cache) => cache.addAll([
+    caches.open('result-store-v3').then((cache) => cache.addAll([
       './',
       './index.html',
       './style.css',

@@ -5,43 +5,112 @@ if ('serviceWorker' in navigator) {
 document.addEventListener('DOMContentLoaded', () => {
     const markInputs = document.querySelectorAll('.mark-input');
     
-    // Auto-calculation logic
+    // Auto-calculation and formatting logic
     markInputs.forEach(input => {
         input.addEventListener('input', calculateTotals);
+        input.addEventListener('blur', (e) => {
+            formatInput(e.target);
+            calculateTotals();
+        });
     });
+
+    function formatInput(input) {
+        let valStr = input.value.trim();
+        if (valStr === '') return;
+
+        let upper = valStr.toUpperCase();
+        if (upper === 'AB') {
+            input.value = 'AB';
+        } else {
+            let cleanStr = valStr.replace(/-/g, '');
+            let val = parseFloat(cleanStr);
+            if (!isNaN(val)) {
+                if (val < 0) val = 0;
+                if (val > 25) val = 25;
+                input.value = val;
+            } else {
+                input.value = '';
+            }
+        }
+    }
 
     function calculateTotals() {
         for (let i = 1; i <= 4; i++) {
             const inputs = document.querySelectorAll(`.u${i}`);
             let total = 0;
             let hasValue = false;
+            let hasFailOrAbsent = false;
             
             inputs.forEach(input => {
-                if (input.value !== '') {
+                let valStr = input.value.trim();
+                
+                // Reset state classes
+                input.classList.remove('mark-fail', 'mark-pass', 'mark-absent');
+
+                if (valStr !== '') {
                     hasValue = true;
-                    // Validate input
-                    let val = parseFloat(input.value);
-                    if (val > 25) {
-                        val = 25;
-                        input.value = 25;
+                    let upper = valStr.toUpperCase();
+                    
+                    if (upper === 'AB') {
+                        input.value = 'AB';
+                        input.classList.add('mark-absent');
+                        hasFailOrAbsent = true;
+                    } else {
+                        // Strip negative signs if user attempts minus marks
+                        if (valStr.includes('-')) {
+                            valStr = valStr.replace(/-/g, '');
+                            input.value = valStr;
+                        }
+
+                        let val = parseFloat(valStr);
+                        if (isNaN(val)) {
+                            // If invalid non-numeric text typed, leave for user or reset if blurred
+                        } else {
+                            if (val < 0) {
+                                val = 0;
+                                input.value = 0;
+                            }
+                            if (val > 25) {
+                                val = 25;
+                                input.value = 25;
+                            }
+
+                            // 8 or less is FAIL, greater than 8 is PASS
+                            if (val <= 8) {
+                                input.classList.add('mark-fail');
+                                hasFailOrAbsent = true;
+                            } else {
+                                input.classList.add('mark-pass');
+                            }
+                            total += val;
+                        }
                     }
-                    if (val < 0) {
-                        val = 0;
-                        input.value = 0;
-                    }
-                    total += val;
                 }
             });
 
             const totalCell = document.getElementById(`t-u${i}`);
             const percentCell = document.getElementById(`p-u${i}`);
+            const resultCell = document.getElementById(`r-u${i}`);
 
             if (hasValue) {
                 totalCell.textContent = total;
                 percentCell.textContent = ((total / 175) * 100).toFixed(2);
+                if (resultCell) {
+                    if (hasFailOrAbsent) {
+                        resultCell.textContent = 'FAIL';
+                        resultCell.className = 'status-fail';
+                    } else {
+                        resultCell.textContent = 'PASS';
+                        resultCell.className = 'status-pass';
+                    }
+                }
             } else {
                 totalCell.textContent = '';
                 percentCell.textContent = '';
+                if (resultCell) {
+                    resultCell.textContent = '';
+                    resultCell.className = '';
+                }
             }
         }
     }
