@@ -7,22 +7,62 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Auto-calculation and formatting logic
     markInputs.forEach(input => {
-        input.addEventListener('input', calculateTotals);
+        input.addEventListener('input', (e) => {
+            sanitizeInput(e.target);
+            calculateTotals();
+        });
         input.addEventListener('blur', (e) => {
             formatInput(e.target);
             calculateTotals();
         });
     });
 
+    function sanitizeInput(input) {
+        let valStr = input.value.trim();
+        if (valStr === '') return;
+
+        let upper = valStr.toUpperCase();
+        // Allow user typing 'A' or 'AB' or 'B'
+        if (upper === 'A') {
+            input.value = 'A';
+            return;
+        }
+        if (upper === 'AB' || upper === 'B') {
+            input.value = 'AB';
+            return;
+        }
+
+        // Strip any character that is NOT a number (0-9) or decimal point (.)
+        let clean = valStr.replace(/[^0-9.]/g, '');
+
+        // Prevent multiple decimal points
+        let parts = clean.split('.');
+        if (parts.length > 2) {
+            clean = parts[0] + '.' + parts.slice(1).join('');
+        }
+
+        let num = parseFloat(clean);
+        if (!isNaN(num)) {
+            if (num > 25) {
+                clean = '25';
+            }
+            if (num < 0) {
+                clean = '0';
+            }
+        }
+
+        input.value = clean;
+    }
+
     function formatInput(input) {
         let valStr = input.value.trim();
         if (valStr === '') return;
 
         let upper = valStr.toUpperCase();
-        if (upper === 'AB') {
+        if (upper === 'AB' || upper === 'A' || upper === 'B') {
             input.value = 'AB';
         } else {
-            let cleanStr = valStr.replace(/-/g, '');
+            let cleanStr = valStr.replace(/[^0-9.]/g, '');
             let val = parseFloat(cleanStr);
             if (!isNaN(val)) {
                 if (val < 0) val = 0;
@@ -55,16 +95,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         input.value = 'AB';
                         input.classList.add('mark-absent');
                         hasFailOrAbsent = true;
+                    } else if (upper === 'A') {
+                        hasFailOrAbsent = true;
                     } else {
-                        // Strip negative signs if user attempts minus marks
-                        if (valStr.includes('-')) {
-                            valStr = valStr.replace(/-/g, '');
-                            input.value = valStr;
-                        }
-
-                        let val = parseFloat(valStr);
+                        let cleanStr = valStr.replace(/[^0-9.]/g, '');
+                        let val = parseFloat(cleanStr);
                         if (isNaN(val)) {
-                            // If invalid non-numeric text typed, leave for user or reset if blurred
+                            input.value = '';
                         } else {
                             if (val < 0) {
                                 val = 0;
